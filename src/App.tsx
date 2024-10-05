@@ -1,35 +1,69 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Route, Routes } from "react-router-dom";
+import { lazy, Suspense } from "react";
+
+import ErrorBoundary from "@/components/ErrorBoundary";
+
+const IndexPage = lazy(() => import("@/pages/index"));
+const DocsPage = lazy(() => import("@/pages/docs"));
+const PricingPage = lazy(() => import("@/pages/pricing"));
+const BlogPage = lazy(() => import("@/pages/blog"));
+const AboutPage = lazy(() => import("@/pages/about"));
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Routes>
+      <Route
+        element={
+          <ErrorBoundary>
+            <Suspense fallback={<div>Loading...</div>}>
+              <IndexPage />
+            </Suspense>
+          </ErrorBoundary>
+        }
+        path="/"
+      />
+      <Route
+        element={
+          <ErrorBoundary>
+            <Suspense fallback={<div>Loading...</div>}>
+              <DocsPage />
+            </Suspense>
+          </ErrorBoundary>
+        }
+        path="/docs"
+      />
+      <Route
+        element={
+          <ErrorBoundary>
+            <Suspense fallback={<div>Loading...</div>}>
+              <PricingPage />
+            </Suspense>
+          </ErrorBoundary>
+        }
+        path="/pricing"
+      />
+      <Route
+        element={
+          <ErrorBoundary>
+            <Suspense fallback={<div>Loading...</div>}>
+              <BlogPage />
+            </Suspense>
+          </ErrorBoundary>
+        }
+        path="/blog"
+      />
+      <Route
+        element={
+          <ErrorBoundary>
+            <Suspense fallback={<div>Loading...</div>}>
+              <AboutPage />
+            </Suspense>
+          </ErrorBoundary>
+        }
+        path="/about"
+      />
+    </Routes>
+  );
 }
 
-export default App
+export default App;
