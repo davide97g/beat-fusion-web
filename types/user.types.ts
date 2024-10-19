@@ -1,9 +1,10 @@
-export interface STUserRecap {
+export interface BFUserRecap {
   id: string;
   email: string;
-  displayName: string;
+  username: string;
   photoURL: string;
 }
-export interface STUser extends STUserRecap {
-  credits: number; // 1 credit = 1 hour slot
+export interface BFUser extends BFUserRecap {
+  songs: string[];
+  mixes: string[];
 }

@@ -1,4 +1,4 @@
-import { STUserRecap } from "./user.types";
+import { BFUserRecap } from "./user.types";
 
 export interface STReservation {
   id: string; // UUID
@@ -11,7 +11,7 @@ export interface STReservation {
 
 export interface STReservationAdmin {
   id: string; // UUID
-  user: STUserRecap; // User object only for admin
+  user: BFUserRecap; // User object only for admin
   date: string; // YYYY-MM-DD
   hourStart: number; // 24h
   hourEnd: number; // 24h

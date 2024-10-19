@@ -46,7 +46,7 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
         .then((idTokenResult) => setIsAdmin(!!idTokenResult.claims.admin))
         .catch(() => setIsAdmin(false))
         .finally(() => setLoading(false));
-    }
+    } else setLoading(false);
   }, [firebaseUser]);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
       createUser({
         id: firebaseUser.uid,
         email: firebaseUser.email!,
-        displayName: firebaseUser.displayName!,
+        username: firebaseUser.displayName!,
         photoURL: firebaseUser.photoURL!,
       });
     }

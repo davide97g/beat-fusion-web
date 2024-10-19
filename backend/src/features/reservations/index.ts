@@ -5,7 +5,7 @@ import {
 } from "../../../../types/reservation.types";
 import { ApiError, createApiError } from "../../types/error";
 import { decrementCredit, incrementCredits } from "../credits";
-import { STUserRecap } from "../../../../types/user.types";
+import { BFUserRecap } from "../../../../types/user.types";
 
 export const createReservationAdmin = async (
   reservationAdmin: STReservation
@@ -165,7 +165,7 @@ export const getReservationsAdmin = async ({
       ...userIdList.map((uId) => db.collection("users").doc(uId))
     );
 
-    const users = usersSnapshot.map((user) => user.data() as STUserRecap);
+    const users = usersSnapshot.map((user) => user.data() as BFUserRecap);
 
     const reservationsAdmin: STReservationAdmin[] = reservations
       .map((reservation) => {
@@ -175,7 +175,7 @@ export const getReservationsAdmin = async ({
           ...reservation,
           user: {
             id: userFound?.id,
-            displayName: userFound?.displayName,
+            username: userFound?.username,
             photoURL: userFound?.photoURL,
             email: userFound?.email,
           },

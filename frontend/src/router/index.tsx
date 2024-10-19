@@ -13,7 +13,17 @@ const NotFound = lazy(() => import("../pages/NotFound"));
 
 export const router = createBrowserRouter([
   {
-    path: "/Fusions",
+    path: "/",
+    element: (
+      <Suspense>
+        <ProtectedRoute>
+          <Fusions />
+        </ProtectedRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/fusions",
     element: (
       <Suspense>
         <ProtectedRoute>

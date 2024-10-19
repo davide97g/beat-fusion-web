@@ -1,5 +1,5 @@
 import { FieldValue, getFirestore } from "firebase-admin/firestore";
-import { STUser } from "../../../../types/user.types";
+import { BFUser } from "../../../../types/user.types";
 
 export const decrementUserCredits = async ({ userId }: { userId: string }) => {
   if (!userId) throw new Error("User not found");
@@ -45,10 +45,10 @@ export const getUserById = async ({
 
   const user = await userRef.get();
 
-  return user.data() as STUser;
+  return user.data() as BFUser;
 };
 
-export const createUser = async ({ user }: { user: STUser }) => {
+export const createUser = async ({ user }: { user: BFUser }) => {
   if (!user.id) throw new Error("Missing user uid");
   if (!user.email) throw new Error("Missing user email");
 
