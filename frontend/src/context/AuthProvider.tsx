@@ -34,6 +34,7 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       setFirebaseUser(user ?? undefined);
+      if (!user) setLoading(false);
     });
 
     return unsubscribe;
@@ -46,7 +47,7 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
         .then((idTokenResult) => setIsAdmin(!!idTokenResult.claims.admin))
         .catch(() => setIsAdmin(false))
         .finally(() => setLoading(false));
-    } else setLoading(false);
+    }
   }, [firebaseUser]);
 
   useEffect(() => {
