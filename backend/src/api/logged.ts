@@ -12,8 +12,6 @@ import { getUserInfoFromToken } from "../middleware/utils";
 import { isApiError } from "../types/error";
 import { createUser, getUserById } from "../features/user";
 
-const endpointSecret = process.env.STRIPE_CHECKOUT_SIGNING_SECRET;
-
 export const addLoggedRoutes = (app: Express) => {
   app.get("/reservations", [isLogged], async (req: Request, res: Response) => {
     const userId = req.query.userId as string | undefined;

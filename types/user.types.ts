@@ -1,5 +1,3 @@
-import { PaymentRecord } from "./payment";
-
 export interface STUserRecap {
   id: string;
   email: string;
@@ -8,5 +6,4 @@ export interface STUserRecap {
 }
 export interface STUser extends STUserRecap {
   credits: number; // 1 credit = 1 hour slot
-  paymentHistory?: PaymentRecord[];
 }

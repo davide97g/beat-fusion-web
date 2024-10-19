@@ -1,21 +1,5 @@
 import { FieldValue, getFirestore } from "firebase-admin/firestore";
-import { PaymentRecord } from "../../../../types/payment";
 import { STUser } from "../../../../types/user.types";
-
-export const addRecordToUserPaymentHistory = async ({
-  userId,
-  record,
-}: {
-  userId: string;
-  record: PaymentRecord;
-}) => {
-  const db = getFirestore();
-  const userRef = db.collection("users").doc(userId);
-
-  return userRef.update({
-    paymentHistory: FieldValue.arrayUnion(record),
-  });
-};
 
 export const decrementUserCredits = async ({ userId }: { userId: string }) => {
   if (!userId) throw new Error("User not found");
