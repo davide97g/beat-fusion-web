@@ -14,7 +14,7 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:8080",
-  "https://spike-time.vercel.app",
+  "https://beat-fusion-web.vercel.app",
 ];
 
 app.use(

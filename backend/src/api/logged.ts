@@ -1,7 +1,6 @@
 import express, { Express, Request, Response } from "express";
 import { STReservation } from "../../../types/reservation.types";
-import { stripe } from "../config/stripe";
-import { addCreditsToUser } from "../features/payments";
+
 import {
   createReservation,
   deleteReservation,
@@ -16,47 +15,6 @@ import { createUser, getUserById } from "../features/user";
 const endpointSecret = process.env.STRIPE_CHECKOUT_SIGNING_SECRET;
 
 export const addLoggedRoutes = (app: Express) => {
-  app.post(
-    "/webhook",
-    express.raw({ type: "application/json" }),
-    async (request, response) => {
-      console.info("[Event]: webhook");
-      const sig = request.headers["stripe-signature"] as string;
-
-      if (!endpointSecret) {
-        response.status(400).send(`Webhook Error: Signing secret not found`);
-        return;
-      }
-
-      let event;
-
-      try {
-        event = stripe?.webhooks.constructEvent(
-          request.body,
-          sig,
-          endpointSecret
-        );
-      } catch (err: any) {
-        response.status(400).send(`Webhook Error: ${err?.message}`);
-        return;
-      }
-
-      // Handle the event
-      switch (event?.type) {
-        case "checkout.session.completed":
-          console.info("[Event]: checkout.session.completed");
-          await addCreditsToUser(event.data.object);
-          break;
-        // ... handle other event types
-        default:
-          console.log(`Unhandled event type ${event?.type}`);
-      }
-
-      // Return a 200 response to acknowledge receipt of the event
-      response.send();
-    }
-  );
-
   app.get("/reservations", [isLogged], async (req: Request, res: Response) => {
     const userId = req.query.userId as string | undefined;
     const dates = req.query.dates as string[] | undefined;

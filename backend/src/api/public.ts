@@ -4,7 +4,7 @@ import { getReservationById } from "../features/reservations";
 
 export const addPublicRoutes = (app: Express) => {
   app.get("/", (_: Request, res: Response) => {
-    res.send({ message: "Spike Time Server", version });
+    res.send({ message: "Beat Flow Server", version });
   });
 
   app.get("/reservation/:id", async (req: Request, res: Response) => {
