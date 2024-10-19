@@ -1,6 +1,6 @@
-# beat-fusion-engine
+# beat-flow-engine
 
-server for beat fusion analysis
+server for beat flow analysis
 
 ## Build
 

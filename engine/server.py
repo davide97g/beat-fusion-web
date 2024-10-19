@@ -11,7 +11,7 @@ PORT = int(os.environ.get('PORT', 5000))
 
 @app.route('/', methods=['GET'])
 def hello():
-    return 'Beat Fusion Engine'
+    return 'Beat Flow Engine'
 
 @app.route('/analyze', methods=['POST'])
 def process_audio():

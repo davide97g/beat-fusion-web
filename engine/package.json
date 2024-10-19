@@ -1,7 +1,7 @@
 {
-  "name": "beat-fusion-engine",
+  "name": "beat-flow-engine",
   "version": "0.3.0",
-  "description": "Beat Fusion Engine",
+  "description": "Beat Flow Engine",
   "main": "index.js",
   "scripts": {
     "install": "pip install -r requirements.txt",
