@@ -6,6 +6,7 @@ import ProtectedRoute from "./ProtectedRoute";
 const PersonalArea = lazy(() => import("../pages/PersonalArea"));
 const Fusions = lazy(() => import("../pages/Fusions"));
 const Fusion = lazy(() => import("../pages/Fusion"));
+const Create = lazy(() => import("../pages/Create"));
 
 const Login = lazy(() => import("../pages/Login"));
 const Forbidden = lazy(() => import("../pages/Forbidden"));
@@ -28,6 +29,16 @@ export const router = createBrowserRouter([
       <Suspense>
         <ProtectedRoute>
           <Fusions />
+        </ProtectedRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/create",
+    element: (
+      <Suspense>
+        <ProtectedRoute>
+          <Create />
         </ProtectedRoute>
       </Suspense>
     ),
