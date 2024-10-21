@@ -1,33 +1,5 @@
-import { FieldValue, getFirestore } from "firebase-admin/firestore";
+import { getFirestore } from "firebase-admin/firestore";
 import { BFUser } from "../../../../types/user.types";
-
-export const decrementUserCredits = async ({ userId }: { userId: string }) => {
-  if (!userId) throw new Error("User not found");
-
-  const db = getFirestore();
-  const userRef = db.collection("users").doc(userId);
-
-  return userRef.update({
-    credits: FieldValue.increment(-1),
-  });
-};
-
-export const incrementUserCredits = async ({
-  userId,
-  quantity,
-}: {
-  userId: string;
-  quantity: number;
-}) => {
-  if (!userId) throw new Error("User not found");
-
-  const db = getFirestore();
-  const userRef = db.collection("users").doc(userId);
-
-  return userRef.update({
-    credits: FieldValue.increment(quantity),
-  });
-};
 
 export const getUserById = async ({
   userId,

@@ -1,52 +1,45 @@
 import express, { Express, Request, Response } from "express";
-import { STReservation } from "../../../types/reservation.types";
 
+import { IFusion } from "../../../types/fusion.types";
 import {
-  createReservation,
-  deleteReservation,
-  getReservations,
-  updateReservation,
-} from "../features/reservations";
+  createFusion,
+  deleteFusion,
+  getFusionById,
+  getFusions,
+  updateFusion,
+} from "../features/fusions";
+import { createUser, getUserById } from "../features/user";
 import { isLogged } from "../middleware/isLogged";
 import { getUserInfoFromToken } from "../middleware/utils";
 import { isApiError } from "../types/error";
-import { createUser, getUserById } from "../features/user";
 
 export const addLoggedRoutes = (app: Express) => {
-  app.get("/reservations", [isLogged], async (req: Request, res: Response) => {
-    const userId = req.query.userId as string | undefined;
-    const dates = req.query.dates as string[] | undefined;
-    const datesArray = dates
-      ? Array.isArray(dates)
-        ? dates
-        : [dates]
-      : undefined;
-
+  app.get("/fusions", [isLogged], async (req: Request, res: Response) => {
     const tokenInfo = await getUserInfoFromToken(req);
     if (!tokenInfo) {
       res.status(400).send({ message: "Error getting user info" });
       return;
     }
 
-    if (userId && userId !== tokenInfo.uid) {
-      res.status(403).send({ message: "Forbidden: user not authorized" });
+    if (!tokenInfo.uid) {
+      res.status(400).send({ message: "Missing user ID" });
       return;
     }
 
-    const reservations = await getReservations({
-      userId,
-      dates: datesArray,
+    const fusions = await getFusions({
+      userId: tokenInfo.uid,
     });
-    if (reservations === null) {
-      res.status(404).send({ error: "Reservations not found" });
+
+    if (fusions === null) {
+      res.status(404).send({ error: "Fusions not found" });
       return;
     }
 
-    res.send({ reservations });
+    res.send({ fusions });
   });
 
   app.post(
-    "/reservation",
+    "/fusion",
     [isLogged],
     express.json(),
     async (req: Request, res: Response) => {
@@ -59,26 +52,26 @@ export const addLoggedRoutes = (app: Express) => {
       }
 
       try {
-        const reservation = await createReservation(
-          body as STReservation,
-          tokenInfo.uid
-        );
+        const fusion = await createFusion({
+          fusion: body as IFusion,
+          userId: tokenInfo.uid,
+        });
 
-        if (isApiError(reservation)) {
-          res.status(reservation.status).send({ message: reservation.message });
+        if (isApiError(fusion)) {
+          res.status(fusion.status).send({ message: fusion.message });
           return;
         }
 
-        res.send({ reservation });
+        res.send({ fusion });
       } catch (e: any) {
-        res.status(403).send({ message: "Error creating reservation" });
+        res.status(403).send({ message: "Error creating fusion" });
         return;
       }
     }
   );
 
   app.put(
-    "/reservation",
+    "/fusion",
     [isLogged],
     express.json(),
     async (req: Request, res: Response) => {
@@ -91,15 +84,15 @@ export const addLoggedRoutes = (app: Express) => {
       }
 
       try {
-        const reservation = await updateReservation(
-          body as STReservation,
-          tokenInfo.uid
-        );
-        if (!reservation) {
-          res.status(400).send({ message: "Error creating reservation" });
+        const fusion = await updateFusion({
+          newFusion: body as IFusion,
+          userId: tokenInfo.uid,
+        });
+        if (!fusion) {
+          res.status(400).send({ message: "Error creating fusion" });
           return;
         }
-        res.send({ reservation });
+        res.send({ fusion });
       } catch (e) {
         res.status(403).send({ message: e });
         return;
@@ -108,13 +101,13 @@ export const addLoggedRoutes = (app: Express) => {
   );
 
   app.delete(
-    "/reservation/:id",
+    "/fusion/:id",
     [isLogged],
     express.json(),
     async (req: Request, res: Response) => {
       const { id } = req.params;
       if (!id) {
-        res.status(400).send({ message: "Missing reservation ID" });
+        res.status(400).send({ message: "Missing fusion ID" });
         return;
       }
 
@@ -125,8 +118,8 @@ export const addLoggedRoutes = (app: Express) => {
       }
 
       try {
-        await deleteReservation(id, tokenInfo.uid);
-        res.send({ message: "Reservation deleted" });
+        await deleteFusion({ fusionId: id, userId: tokenInfo.uid });
+        res.send({ message: "Fusion deleted" });
       } catch (e) {
         res.status(403).send({ message: e });
         return;
@@ -190,6 +183,28 @@ export const addLoggedRoutes = (app: Express) => {
         res.status(403).send({ message: e });
         return;
       }
+    }
+  );
+
+  app.get(
+    "/fusion/:id",
+    [isLogged],
+    express.json(),
+    async (req: Request, res: Response) => {
+      const fusionId = req.params.id;
+
+      const tokenInfo = await getUserInfoFromToken(req);
+      if (!tokenInfo) {
+        res.status(400).send({ message: "Error getting user info" });
+        return;
+      }
+
+      const fusion = await getFusionById({ fusionId, userId: tokenInfo.uid });
+      if (fusion === null) {
+        res.status(404).send({ error: "Fusion not found" });
+        return;
+      }
+      res.send({ fusion });
     }
   );
 

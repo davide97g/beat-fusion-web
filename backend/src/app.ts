@@ -1,7 +1,6 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-import { addAdminRoutes } from "./api/admin";
 import { addLoggedRoutes } from "./api/logged";
 import { addPublicRoutes } from "./api/public";
 import { initializeFirebaseApp } from "./config/firebase";
@@ -30,9 +29,6 @@ addPublicRoutes(app);
 
 // **** LOGGED USERS ****
 addLoggedRoutes(app);
-
-// **** ADMIN ****
-addAdminRoutes(app);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
