@@ -16,7 +16,7 @@ def hello():
 @app.route('/analyze', methods=['POST'])
 def process_audio():
 
-    audio_file = request.files.get('file')
+    audio_file = request.files.get('song')
 
     if not audio_file:
         return jsonify({'error': 'No audio file provided'}), 400

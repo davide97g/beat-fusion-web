@@ -1,6 +1,6 @@
 
 import librosa
-import soundfile as sf
+# import soundfile as sf
 from src.fingerprint import generate_fingerprint
 from src.bounds import getBoundariesInfo
 import numpy as np
@@ -54,4 +54,4 @@ def getInfo(file):
     boundaries_times = np.append(boundaries_times, duration)
     bounds = getBoundariesInfo(y, sr, boundaries_times, 5, 1)
 
-    return {'id': fingerprint, 'tempo': tempo.tolist(), 'duration': duration, 'bounds_number': bounds_number, 'bounds': bounds}
+    return {'id': fingerprint, 'tempo': tempo.tolist(), 'duration': duration, 'intervals': bounds}

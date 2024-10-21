@@ -15,6 +15,12 @@ export interface ISongRecap {
   name: string;
 }
 
+export interface ISongAnalysis extends ISongRecap {
+  duration: number;
+  tempo: number[];
+  intervals: ISongInterval[];
+}
+
 export interface ISong extends ISongRecap {
   duration: number;
   storageURL: string;

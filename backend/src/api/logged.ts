@@ -12,6 +12,8 @@ import { createUser, getUserById } from "../features/user";
 import { isLogged } from "../middleware/isLogged";
 import { getUserInfoFromToken } from "../middleware/utils";
 import { isApiError } from "../types/error";
+import { ISongAnalysis } from "../../../types/song.types";
+import { createSong } from "../features/songs";
 
 export const addLoggedRoutes = (app: Express) => {
   app.get("/fusions", [isLogged], async (req: Request, res: Response) => {
@@ -63,6 +65,40 @@ export const addLoggedRoutes = (app: Express) => {
         }
 
         res.send({ fusion });
+      } catch (e: any) {
+        res.status(403).send({ message: "Error creating fusion" });
+        return;
+      }
+    }
+  );
+
+  app.post(
+    "/song/analysis",
+    [isLogged],
+    express.json(),
+    async (req: Request, res: Response) => {
+      const { body } = req;
+
+      const tokenInfo = await getUserInfoFromToken(req);
+      if (!tokenInfo) {
+        res.status(400).send({ message: "Error getting user info" });
+        return;
+      }
+
+      try {
+        const songAnalysis = await createSong({
+          songAnalysis: body as ISongAnalysis,
+          userId: tokenInfo.uid,
+        });
+
+        if (isApiError(songAnalysis)) {
+          res
+            .status(songAnalysis.status)
+            .send({ message: songAnalysis.message });
+          return;
+        }
+
+        res.send({ songAnalysis });
       } catch (e: any) {
         res.status(403).send({ message: "Error creating fusion" });
         return;

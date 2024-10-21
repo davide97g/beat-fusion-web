@@ -1,4 +1,5 @@
 import { IFusion } from "@/models/fusion.types";
+import { ISongAnalysis } from "../../../types/song.types";
 import { IUser } from "@/models/user.types";
 import { getToken } from "firebase/app-check";
 
@@ -6,6 +7,9 @@ import { appCheck, auth } from "../config/firebase";
 
 const BACKEND_URL =
   import.meta.env.VITE_APP_BACKEND_URL ?? "http://localhost:3000";
+
+const ENGINE_URL =
+  import.meta.env.VITE_APP_ENGINE_URL ?? "http://localhost:5000";
 
 export const API = {
   getFusion: async ({ fusionId }: { fusionId: string }) => {
@@ -211,6 +215,58 @@ export const API_AUTH = {
     })
       .then((res) => res.json())
       .then((res) => res.message as string)
+      .catch((err) => {
+        console.info(err);
+        return null;
+      });
+  },
+  createSongAnalysis: async ({
+    songAnalysis,
+  }: {
+    songAnalysis: ISongAnalysis;
+  }) => {
+    const appCheckTokenResponse = await getToken(appCheck, true).catch(
+      (err) => {
+        console.info(err);
+        return null;
+      },
+    );
+    const idToken = await auth.currentUser?.getIdToken().catch((err) => {
+      console.info(err);
+      return null;
+    });
+    if (!appCheckTokenResponse?.token || !idToken) return null;
+    return fetch(`${BACKEND_URL}/song/analysis`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Firebase-AppCheck": appCheckTokenResponse.token,
+        Authorization: `Bearer ${idToken}`,
+      },
+      body: JSON.stringify(songAnalysis),
+    })
+      .then((res) => res.json())
+      .then((res) => res.songAnalysis as ISongAnalysis)
+      .catch((err) => {
+        console.info(err);
+        return null;
+      });
+  },
+  analyzeSong: async ({ song }: { song: File }) => {
+    const formData = new FormData();
+    formData.append("song", song);
+    return fetch(`${ENGINE_URL}/analyze`, {
+      method: "POST",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then(
+        (res) =>
+          ({
+            ...res,
+            name: song.name,
+          }) as ISongAnalysis,
+      )
       .catch((err) => {
         console.info(err);
         return null;
