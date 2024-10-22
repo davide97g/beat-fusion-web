@@ -1,8 +1,9 @@
 import { IFusion } from "@/models/fusion.types";
-import { ISongAnalysis } from "../../../types/song.types";
 import { IUser } from "@/models/user.types";
 import { getToken } from "firebase/app-check";
+import { ISongAnalysis } from "../../../types/song.types";
 
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { appCheck, auth } from "../config/firebase";
 
 const BACKEND_URL =
@@ -267,6 +268,43 @@ export const API_AUTH = {
             name: song.name,
           }) as ISongAnalysis,
       )
+      .catch((err) => {
+        console.info(err);
+        return null;
+      });
+  },
+  uploadSong: async ({ song, songId }: { song: File; songId: string }) => {
+    if (!auth.currentUser?.uid) throw new Error("User not authenticated");
+    const storage = getStorage();
+    const reference = ref(storage, `${auth.currentUser.uid}/${songId}.mp3`);
+    return uploadBytes(reference, song).then((snap) =>
+      getDownloadURL(snap.ref),
+    );
+  },
+  getSongs: async () => {
+    const appCheckTokenResponse = await getToken(appCheck, true).catch(
+      (err) => {
+        console.info(err);
+        return null;
+      },
+    );
+    const idToken = await auth.currentUser?.getIdToken().catch((err) => {
+      console.info(err);
+      return null;
+    });
+    if (!appCheckTokenResponse || !idToken) return null;
+    const query = new URL(`${BACKEND_URL}/songs`);
+
+    return fetch(query.toString(), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Firebase-AppCheck": appCheckTokenResponse.token,
+        Authorization: `Bearer ${idToken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => res.songs as ISongAnalysis[])
       .catch((err) => {
         console.info(err);
         return null;

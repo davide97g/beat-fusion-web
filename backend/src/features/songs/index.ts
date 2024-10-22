@@ -28,3 +28,50 @@ export const createSong = async ({
 
   return songAnalysis;
 };
+
+export const getSongs = async ({
+  userId,
+}: {
+  userId: string;
+}): Promise<ISongAnalysis[] | null> => {
+  try {
+    const db = getFirestore();
+    const songs: ISongAnalysis[] = [];
+
+    const querySnapshot = await db
+      .collection("users")
+      .doc(userId)
+      .collection("songs")
+      .limit(20)
+      .get();
+
+    querySnapshot.forEach((doc) => {
+      songs.push(doc.data() as ISongAnalysis);
+    });
+
+    return songs;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+};
+
+// deleteReport: async (game: RSU_Game): Promise<RSU_Game> => {
+//   return updateDoc(doc(DB, COLLECTION, game.id), {
+//     report: deleteField(),
+//     reportFileURL: deleteField(),
+//   }).then(() => game);
+// },
+// deleteReportFile: async ({
+//   piva,
+//   fileName,
+// }: {
+//   piva: string;
+//   fileName: string;
+// }): Promise<void> => {
+//   const reference = ref(STORAGE, `${piva}/${fileName}.xlsx`);
+//   return deleteObject(reference).catch((error) => {
+//     console.info(error);
+//     throw new Error("Error while deleting the report");
+//   });
+// },

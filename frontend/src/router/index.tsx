@@ -4,6 +4,7 @@ import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 
 const PersonalArea = lazy(() => import("../pages/PersonalArea"));
+const Songs = lazy(() => import("../pages/Songs"));
 const Fusions = lazy(() => import("../pages/Fusions"));
 const Fusion = lazy(() => import("../pages/Fusion"));
 const Create = lazy(() => import("../pages/Create"));
@@ -29,6 +30,16 @@ export const router = createBrowserRouter([
       <Suspense>
         <ProtectedRoute>
           <Fusions />
+        </ProtectedRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/songs",
+    element: (
+      <Suspense>
+        <ProtectedRoute>
+          <Songs />
         </ProtectedRoute>
       </Suspense>
     ),

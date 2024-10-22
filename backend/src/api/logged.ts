@@ -13,7 +13,7 @@ import { isLogged } from "../middleware/isLogged";
 import { getUserInfoFromToken } from "../middleware/utils";
 import { isApiError } from "../types/error";
 import { ISongAnalysis } from "../../../types/song.types";
-import { createSong } from "../features/songs";
+import { createSong, getSongs } from "../features/songs";
 
 export const addLoggedRoutes = (app: Express) => {
   app.get("/fusions", [isLogged], async (req: Request, res: Response) => {
@@ -243,6 +243,30 @@ export const addLoggedRoutes = (app: Express) => {
       res.send({ fusion });
     }
   );
+
+  app.get("/songs", [isLogged], async (req: Request, res: Response) => {
+    const tokenInfo = await getUserInfoFromToken(req);
+    if (!tokenInfo) {
+      res.status(400).send({ message: "Error getting user info" });
+      return;
+    }
+
+    if (!tokenInfo.uid) {
+      res.status(400).send({ message: "Missing user ID" });
+      return;
+    }
+
+    const songs = await getSongs({
+      userId: tokenInfo.uid,
+    });
+
+    if (songs === null) {
+      res.status(404).send({ error: "Songs not found" });
+      return;
+    }
+
+    res.send({ songs });
+  });
 
   return app;
 };

@@ -10,20 +10,19 @@ export interface ISongInterval {
   flow_end: FLOW_TYPE;
 }
 
-export interface ISongRecap {
+export interface ISong {
   id: string;
   name: string;
+  storageURL: string;
 }
 
-export interface ISongAnalysis extends ISongRecap {
+export interface ISongAnalysis extends ISong {
   duration: number;
   tempo: number[];
   intervals: ISongInterval[];
 }
 
-export interface ISong extends ISongRecap {
-  duration: number;
+export interface ISongStorage {
+  songId: string;
   storageURL: string;
-  tempo: number[];
-  intervals: number[];
 }
