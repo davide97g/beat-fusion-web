@@ -92,8 +92,8 @@ export function Fusions() {
               </Button>
               <Button
                 isIconOnly
-                variant="light"
                 color="danger"
+                variant="light"
                 onClick={() => {
                   deleteFusion(fusion.id).then(() => refetch());
                 }}
