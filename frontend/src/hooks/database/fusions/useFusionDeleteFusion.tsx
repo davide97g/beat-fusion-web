@@ -1,13 +1,12 @@
 import { API_AUTH } from "@/services/api";
 import { useMutation } from "@tanstack/react-query";
-import { IFusion } from "@/models/fusion.types";
 
 export const useFusionDeleteFusion = () => {
   return useMutation({
-    mutationFn: async (fusion: IFusion) => {
+    mutationFn: async (fusionId: string) => {
       try {
         await API_AUTH.deleteFusion({
-          fusionId: fusion.id,
+          fusionId,
         });
       } catch (e) {
         console.error(e);

@@ -1,6 +1,9 @@
 import { Loader } from "@/components/Loader";
-import { useFusionFindFusions } from "@/hooks/database/fusions";
-import { Copy, Launch } from "@carbon/icons-react";
+import {
+  useFusionDeleteFusion,
+  useFusionFindFusions,
+} from "@/hooks/database/fusions";
+import { Copy, Launch, TrashCan } from "@carbon/icons-react";
 import {
   Button,
   Table,
@@ -15,7 +18,9 @@ import { useNavigate } from "react-router-dom";
 import { IFusionUser } from "../../../../types/fusion.types";
 
 export function Fusions() {
-  const { data: fusions, isFetching } = useFusionFindFusions();
+  const { data: fusions, isFetching, refetch } = useFusionFindFusions();
+  const { mutateAsync: deleteFusion, isPending: isLoadingDeleteFusion } =
+    useFusionDeleteFusion();
   const navigate = useNavigate();
 
   const columns = [
@@ -32,14 +37,17 @@ export function Fusions() {
       label: "SONGS",
     },
     {
-      key: "open",
-      label: "OPEN",
+      key: "actions",
+      label: "ACTIONS",
     },
   ];
 
   const renderCell = useCallback(
-    (fusion: IFusionUser, columnKey: "id" | "intervals" | "name" | "open") => {
-      const cellValue = columnKey !== "open" ? fusion[columnKey] : "Open";
+    (
+      fusion: IFusionUser,
+      columnKey: "id" | "intervals" | "name" | "actions",
+    ) => {
+      const cellValue = columnKey !== "actions" ? fusion[columnKey] : "actions";
 
       switch (columnKey) {
         case "id":
@@ -70,17 +78,29 @@ export function Fusions() {
           return String(cellValue.length);
         case "name":
           return cellValue as string;
-        case "open":
+        case "actions":
           return (
-            <Button
-              isIconOnly
-              variant="light"
-              onClick={() => {
-                navigate(`/fusion/${fusion.id}`);
-              }}
-            >
-              <Launch />
-            </Button>
+            <div className="flex flex-row gap-2">
+              <Button
+                isIconOnly
+                variant="light"
+                onClick={() => {
+                  navigate(`/fusion/${fusion.id}`);
+                }}
+              >
+                <Launch />
+              </Button>
+              <Button
+                isIconOnly
+                variant="light"
+                color="danger"
+                onClick={() => {
+                  deleteFusion(fusion.id).then(() => refetch());
+                }}
+              >
+                <TrashCan />
+              </Button>
+            </div>
           );
       }
     },
@@ -90,7 +110,7 @@ export function Fusions() {
   return (
     <div className="flex flex-col max-w-80 justify-center items-center gap-4">
       <h1>Fusions</h1>
-      {isFetching && <Loader />}
+      {(isFetching || isLoadingDeleteFusion) && <Loader />}
       {fusions && (
         <Table aria-label="Example table with dynamic content">
           <TableHeader columns={columns}>
