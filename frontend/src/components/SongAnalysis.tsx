@@ -1,15 +1,10 @@
+import { formatFileName, formatTime } from "@/services/utils";
 import { Chip, Divider, ScrollShadow } from "@nextui-org/react";
 import {
   ENERGY_TYPE,
   FLOW_TYPE,
   ISongAnalysis,
 } from "../../../types/song.types";
-
-function convertSecondsToMinutes(seconds: number) {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = Math.round(seconds % 60);
-  return `${minutes}:${remainingSeconds}`;
-}
 
 function getVariantForEnergy(energy: ENERGY_TYPE) {
   switch (energy) {
@@ -42,7 +37,7 @@ export function SongAnalysis({
 }: Readonly<{ songAnalysis: ISongAnalysis }>) {
   return (
     <div className="flex flex-col">
-      <h2>Analsys {songAnalysis.name}</h2>
+      <h2>Analsys {formatFileName(songAnalysis.name)}</h2>
       <div className="flex flex-row gap-4">
         <h3>Tempo</h3>
         <p>{songAnalysis.tempo}</p>
@@ -63,8 +58,7 @@ export function SongAnalysis({
                 className="flex flex-col gap-4"
               >
                 <p>
-                  {convertSecondsToMinutes(interval.start)} -{" "}
-                  {convertSecondsToMinutes(interval.end)}
+                  {formatTime(interval.start)} - {formatTime(interval.end)}
                 </p>
 
                 <p>

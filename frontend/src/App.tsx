@@ -1,10 +1,10 @@
 import { RouterProvider } from "react-router-dom";
 
 import { NextUIProvider } from "@nextui-org/react";
+import { Page } from "./components/Page";
 import { AuthProvider } from "./context/AuthProvider";
 import { LayoutProvider } from "./context/LayoutProvider";
 import { router } from "./router";
-import { Page } from "./components/Page";
 
 function App() {
   return (

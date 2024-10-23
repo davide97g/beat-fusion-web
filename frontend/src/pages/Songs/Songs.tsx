@@ -1,6 +1,7 @@
 import { Loader } from "@/components/Loader";
 import { useSongGetSongs } from "@/hooks/database/songs/useSongGetSongs";
 import {
+  Button,
   Table,
   TableBody,
   TableCell,
@@ -10,14 +11,11 @@ import {
 } from "@nextui-org/react";
 import { useCallback } from "react";
 import { ISongAnalysis } from "../../../../types/song.types";
+import { Copy, Launch } from "@carbon/icons-react";
+import { formatFileName, formatTime } from "@/services/utils";
 
 export function Songs() {
   const { data: songs, isFetching } = useSongGetSongs();
-  // id: string;
-  // name: string;
-  // storageURL: string; duration: number;
-  // tempo: number[];
-  // intervals: ISongInterval[];
 
   const columns = [
     {
@@ -52,38 +50,45 @@ export function Songs() {
       switch (columnKey) {
         case "id":
           return (
-            <p
-              style={{
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-                maxWidth: "20rem",
-              }}
-            >
-              {cellValue}
-            </p>
-          );
-        case "name":
-          return cellValue;
-        case "duration":
-          return cellValue;
-        case "tempo":
-          return (cellValue as unknown as string[]).join(", ");
-        case "storageURL":
-          return (
-            <a href={cellValue as string} target="_blank" rel="noreferrer">
+            <div className="flex flex-row gap-2 items-center">
               <p
-                className="text-blue-500"
                 style={{
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
-                  maxWidth: "20rem",
+                  width: "16rem",
                 }}
               >
                 {cellValue}
               </p>
-            </a>
+              <Button
+                isIconOnly
+                variant="light"
+                onClick={() => {
+                  navigator.clipboard.writeText(cellValue as string);
+                }}
+              >
+                <Copy />
+              </Button>
+            </div>
+          );
+        case "name":
+          return formatFileName(cellValue as string);
+        case "duration":
+          return formatTime(cellValue as number);
+        case "tempo":
+          return (cellValue as unknown as number[])
+            .map((t) => Math.round(t))
+            .join(", ");
+        case "storageURL":
+          return (
+            <Button
+              color="secondary"
+              variant="light"
+              onClick={() => window.open(cellValue as string)}
+            >
+              Open <Launch />
+            </Button>
           );
         default:
           return cellValue;
