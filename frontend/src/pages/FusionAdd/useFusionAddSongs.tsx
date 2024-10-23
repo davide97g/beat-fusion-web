@@ -1,5 +1,5 @@
 import { formatFileName, formatTime } from "@/services/utils";
-import { Copy, Launch, Play } from "@carbon/icons-react";
+import { Copy, Play } from "@carbon/icons-react";
 import { Button } from "@nextui-org/react";
 import { useCallback } from "react";
 import { ISongAnalysis } from "../../../../types/song.types";

@@ -1,6 +1,5 @@
 import { Loader } from "@/components/Loader";
 import { useFusionFindFusions } from "@/hooks/database/fusions";
-import { formatFileName } from "@/services/utils";
 import { Copy, Launch } from "@carbon/icons-react";
 import {
   Button,
