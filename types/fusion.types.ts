@@ -6,3 +6,12 @@ export interface IFusion {
   configItems: ISongInterval[];
   songs: ISong[];
 }
+
+export interface IFusionUser {
+  id: string;
+  name: string;
+  intervals: {
+    songId: string;
+    intervalPosition: number;
+  }[];
+}

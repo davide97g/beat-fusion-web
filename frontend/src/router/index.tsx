@@ -7,6 +7,7 @@ import { Topbar } from "@/components/Topbar";
 const PersonalArea = lazy(() => import("../pages/PersonalArea"));
 const Songs = lazy(() => import("../pages/Songs"));
 const Fusions = lazy(() => import("../pages/Fusions"));
+const FusionAdd = lazy(() => import("../pages/FusionAdd"));
 const Fusion = lazy(() => import("../pages/Fusion"));
 const AddSong = lazy(() => import("../pages/Create"));
 
@@ -33,6 +34,17 @@ export const router = createBrowserRouter([
         <ProtectedRoute>
           <Topbar />
           <Fusions />
+        </ProtectedRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/fusion/add",
+    element: (
+      <Suspense>
+        <ProtectedRoute>
+          <Topbar />
+          <FusionAdd />
         </ProtectedRoute>
       </Suspense>
     ),

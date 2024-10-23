@@ -1,13 +1,13 @@
 import { API_AUTH } from "@/services/api";
 import { useMutation } from "@tanstack/react-query";
-import { IFusion } from "@/models/fusion.types";
+import { IFusionUser } from "../../../../../types/fusion.types";
 
 export const useFusionCreateFusion = () => {
   return useMutation({
-    mutationFn: async (fusion: IFusion) => {
+    mutationFn: async (fusionUser: IFusionUser) => {
       try {
         await API_AUTH.createFusion({
-          fusion,
+          fusionUser,
         });
       } catch (e) {
         console.error(e);

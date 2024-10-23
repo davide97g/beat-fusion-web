@@ -1,6 +1,6 @@
 import { getFirestore } from "firebase-admin/firestore";
 
-import { IFusion } from "../../../../types/fusion.types";
+import { IFusion, IFusionUser } from "../../../../types/fusion.types";
 import { ApiError, createApiError } from "../../types/error";
 
 export const deleteFusion = async ({
@@ -75,12 +75,12 @@ export const getFusions = async ({
 };
 
 export const createFusion = async ({
-  fusion,
+  fusionUser,
   userId,
 }: Readonly<{
-  fusion: IFusion;
+  fusionUser: IFusionUser;
   userId: string;
-}>): Promise<IFusion | ApiError> => {
+}>): Promise<IFusionUser | ApiError> => {
   if (!userId)
     return createApiError(
       "Create Fusion: userId is required",
@@ -94,10 +94,10 @@ export const createFusion = async ({
     .collection("users")
     .doc(userId)
     .collection("fusions")
-    .doc(fusion.id)
-    .set(fusion);
+    .doc(fusionUser.id)
+    .set(fusionUser);
 
-  return fusion;
+  return fusionUser;
 };
 
 export const updateFusion = async ({

@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from "express";
 
-import { IFusion } from "../../../types/fusion.types";
+import { IFusion, IFusionUser } from "../../../types/fusion.types";
 import {
   createFusion,
   deleteFusion,
@@ -55,7 +55,7 @@ export const addLoggedRoutes = (app: Express) => {
 
       try {
         const fusion = await createFusion({
-          fusion: body as IFusion,
+          fusionUser: body as IFusionUser,
           userId: tokenInfo.uid,
         });
 

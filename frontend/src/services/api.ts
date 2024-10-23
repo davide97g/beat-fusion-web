@@ -1,9 +1,9 @@
-import { IFusion } from "@/models/fusion.types";
-import { IUser } from "@/models/user.types";
 import { getToken } from "firebase/app-check";
 import { ISongAnalysis } from "../../../types/song.types";
+import { BFUser } from "../../../types/user.types";
 
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { IFusionUser } from "../../../types/fusion.types";
 import { appCheck, auth } from "../config/firebase";
 
 const BACKEND_URL =
@@ -21,7 +21,7 @@ export const API = {
       },
     })
       .then((res) => res.json())
-      .then((res) => (res as { fusion: IFusion }).fusion)
+      .then((res) => (res as { fusion: IFusionUser }).fusion)
       .catch((err) => {
         console.info(err);
         return undefined;
@@ -66,13 +66,13 @@ export const API_AUTH = {
       },
     })
       .then((res) => res.json())
-      .then((res) => res.user as IUser)
+      .then((res) => res.user as BFUser)
       .catch((err) => {
         console.info(err);
         return null;
       });
   },
-  createUser: async ({ user }: { user: IUser }) => {
+  createUser: async ({ user }: { user: BFUser }) => {
     const appCheckTokenResponse = await getToken(appCheck, true).catch(
       (err) => {
         console.info(err);
@@ -94,7 +94,7 @@ export const API_AUTH = {
       body: JSON.stringify(user),
     })
       .then((res) => res.json())
-      .then((res) => res.user as IUser)
+      .then((res) => res.user as BFUser)
       .catch((err) => {
         console.info(err);
         return null;
@@ -132,13 +132,13 @@ export const API_AUTH = {
       },
     })
       .then((res) => res.json())
-      .then((res) => res.fusions as IFusion[])
+      .then((res) => res.fusions as IFusionUser[])
       .catch((err) => {
         console.info(err);
         return null;
       });
   },
-  createFusion: async ({ fusion }: { fusion: IFusion }) => {
+  createFusion: async ({ fusionUser }: { fusionUser: IFusionUser }) => {
     const appCheckTokenResponse = await getToken(appCheck, true).catch(
       (err) => {
         console.info(err);
@@ -157,16 +157,16 @@ export const API_AUTH = {
         "X-Firebase-AppCheck": appCheckTokenResponse.token,
         Authorization: `Bearer ${idToken}`,
       },
-      body: JSON.stringify(fusion),
+      body: JSON.stringify(fusionUser),
     })
       .then((res) => res.json())
-      .then((res) => res.fusion as IFusion)
+      .then((res) => res.fusion as IFusionUser)
       .catch((err) => {
         console.info(err);
         return null;
       });
   },
-  updateFusion: async ({ fusion }: { fusion: IFusion }) => {
+  updateFusion: async ({ fusion }: { fusion: IFusionUser }) => {
     const appCheckTokenResponse = await getToken(appCheck, true).catch(
       (err) => {
         console.info(err);
@@ -188,7 +188,7 @@ export const API_AUTH = {
       body: JSON.stringify(fusion),
     })
       .then((res) => res.json())
-      .then((res) => res.fusion as IFusion)
+      .then((res) => res.fusion as IFusionUser)
       .catch((err) => {
         console.info(err);
         return null;

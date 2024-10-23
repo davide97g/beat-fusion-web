@@ -1,37 +1,114 @@
 import { Loader } from "@/components/Loader";
 import { useFusionFindFusions } from "@/hooks/database/fusions";
-import { Accordion, AccordionItem } from "@nextui-org/react";
+import { formatFileName } from "@/services/utils";
+import { Copy, Launch } from "@carbon/icons-react";
+import {
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from "@nextui-org/react";
+import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { IFusionUser } from "../../../../types/fusion.types";
 
 export function Fusions() {
-  const defaultContent =
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+  const { data: fusions, isFetching } = useFusionFindFusions();
+  const navigate = useNavigate();
 
-  const { data: fusions, isFetching } = useFusionFindFusions({});
+  const columns = [
+    {
+      key: "id",
+      label: "ID",
+    },
+    {
+      key: "name",
+      label: "NAME",
+    },
+    {
+      key: "intervals",
+      label: "SONGS",
+    },
+    {
+      key: "open",
+      label: "OPEN",
+    },
+  ];
+
+  const renderCell = useCallback(
+    (fusion: IFusionUser, columnKey: "id" | "intervals" | "name" | "open") => {
+      const cellValue = columnKey !== "open" ? fusion[columnKey] : "Open";
+
+      switch (columnKey) {
+        case "id":
+          return (
+            <div className="flex flex-row gap-2 items-center">
+              <p
+                style={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  width: "16rem",
+                }}
+              >
+                {cellValue as string}
+              </p>
+              <Button
+                isIconOnly
+                variant="light"
+                onClick={() => {
+                  navigator.clipboard.writeText(cellValue as string);
+                }}
+              >
+                <Copy />
+              </Button>
+            </div>
+          );
+        case "intervals":
+          return String(cellValue.length);
+        case "name":
+          return cellValue as string;
+        case "open":
+          return (
+            <Button
+              isIconOnly
+              variant="light"
+              onClick={() => {
+                navigate(`/fusion/${fusion.id}`);
+              }}
+            >
+              <Launch />
+            </Button>
+          );
+      }
+    },
+    [],
+  );
 
   return (
-    <div className="flex max-w-80">
+    <div className="flex flex-col max-w-80 justify-center items-center gap-4">
       <h1>Fusions</h1>
       {isFetching && <Loader />}
       {fusions && (
-        <Accordion selectionMode="multiple">
-          {fusions?.map((fusion) => (
-            <AccordionItem
-              key={fusion.id}
-              aria-label="Chung Miller"
-              startContent={
-                <img
-                  alt="Chung Miller"
-                  src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
-                  style={{ borderRadius: "50%" }}
-                />
-              }
-              subtitle="4 unread messages"
-              title="Chung Miller"
-            >
-              {defaultContent}
-            </AccordionItem>
-          ))}
-        </Accordion>
+        <Table aria-label="Example table with dynamic content">
+          <TableHeader columns={columns}>
+            {(column) => (
+              <TableColumn key={column.key}>{column.label}</TableColumn>
+            )}
+          </TableHeader>
+          <TableBody items={fusions}>
+            {(item) => (
+              <TableRow key={item.id}>
+                {(columnKey) => (
+                  <TableCell>{renderCell(item, columnKey as any)}</TableCell>
+                )}
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       )}
     </div>
   );
