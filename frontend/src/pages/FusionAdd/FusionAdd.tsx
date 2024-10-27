@@ -6,8 +6,6 @@ import {
   AccordionItem,
   Button,
   Input,
-  Radio,
-  RadioGroup,
   Slider,
   Table,
   TableBody,
