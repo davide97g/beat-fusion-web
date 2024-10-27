@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from "express";
 
-import { IFusion, IFusionUser } from "../../../types/fusion.types";
+import { IFusionUser } from "../../../types/fusion.types";
+import { ISongAnalysis } from "../../../types/song.types";
 import {
   createFusion,
   deleteFusion,
@@ -8,12 +9,11 @@ import {
   getFusions,
   updateFusion,
 } from "../features/fusions";
+import { createSong, getSongs } from "../features/songs";
 import { createUser, getUserById } from "../features/user";
 import { isLogged } from "../middleware/isLogged";
 import { getUserInfoFromToken } from "../middleware/utils";
 import { isApiError } from "../types/error";
-import { ISongAnalysis } from "../../../types/song.types";
-import { createSong, getSongs } from "../features/songs";
 
 export const addLoggedRoutes = (app: Express) => {
   app.get("/fusions", [isLogged], async (req: Request, res: Response) => {
@@ -121,7 +121,7 @@ export const addLoggedRoutes = (app: Express) => {
 
       try {
         const fusion = await updateFusion({
-          newFusion: body as IFusion,
+          newFusion: body as IFusionUser,
           userId: tokenInfo.uid,
         });
         if (!fusion) {

@@ -2,6 +2,7 @@ import { getFirestore } from "firebase-admin/firestore";
 
 import { IFusion, IFusionUser } from "../../../../types/fusion.types";
 import { ApiError, createApiError } from "../../types/error";
+import { ISong, ISongAnalysis } from "../../../../types/song.types";
 
 export const deleteFusion = async ({
   fusionId,
@@ -9,9 +10,10 @@ export const deleteFusion = async ({
 }: Readonly<{ fusionId: string; userId: string }>) => {
   if (!fusionId) throw new Error("Delete Fusion: fusionId is required");
 
-  const fusion = await getFusionById({ fusionId, userId });
+  // ! This is fetching all the songs => we just need the fusion
+  // const fusion = await getFusionById({ fusionId, userId });
 
-  if (!fusion) throw new Error("Delete Fusion: fusion not found");
+  // if (!fusion) throw new Error("Delete Fusion: fusion not found");
 
   const db = getFirestore();
   await db
@@ -28,19 +30,38 @@ export const getFusionById = async ({
 }: Readonly<{
   fusionId: string;
   userId: string;
-}>): Promise<IFusion | null> => {
+}>): Promise<IFusionUser | null> => {
   if (!fusionId) throw new Error("Get Fusion: fusionId is required");
 
   try {
     const db = getFirestore();
-    const fusion = await db
+    const fusionResponse = await db
       .collection("users")
       .doc(userId)
       .collection("fusions")
       .doc(fusionId)
       .get();
 
-    return fusion.data() as IFusion;
+    if (!fusionResponse.exists) return null;
+
+    const fusion = fusionResponse.data() as IFusionUser;
+    const fusionSongIdList = fusion.intervals.map((i) => i.songId);
+
+    const fusionSongsResponse = await db
+      .collection("users")
+      .doc(userId)
+      .collection("songs")
+      .where("id", "in", fusionSongIdList)
+      .get();
+
+    const fullFusion: IFusion = {
+      id: fusion.id,
+      name: fusion.name,
+      songs: fusionSongsResponse.docs.map((doc) => doc.data() as ISongAnalysis),
+      intervals: fusion.intervals,
+    };
+
+    return fullFusion;
   } catch (e) {
     console.error(e);
     return null;
@@ -104,16 +125,17 @@ export const updateFusion = async ({
   newFusion,
   userId,
 }: Readonly<{
-  newFusion: IFusion;
+  newFusion: IFusionUser;
   userId: string;
-}>): Promise<IFusion | null> => {
+}>): Promise<IFusionUser | null> => {
   if (!userId) throw new Error("Create Fusion: userId is required");
 
-  const fusion = await getFusionById({ fusionId: newFusion.id, userId });
+  // ! This is fetching all the songs => we just need the fusion
+  // const fusion = await getFusionById({ fusionId: newFusion.id, userId });
 
-  if (!fusion) throw new Error("Create Fusion: fusion not found");
-  if (newFusion.id !== fusion.id)
-    throw new Error("Create Fusion: fusion id does not match");
+  // if (!fusion) throw new Error("Create Fusion: fusion not found");
+  // if (newFusion.id !== fusion.id)
+  //   throw new Error("Create Fusion: fusion id does not match");
 
   const db = getFirestore();
 
@@ -121,7 +143,7 @@ export const updateFusion = async ({
     .collection("users")
     .doc(userId)
     .collection("fusions")
-    .doc(fusion.id)
+    .doc(newFusion.id)
     .set(newFusion);
-  return fusion;
+  return newFusion;
 };

@@ -8,6 +8,7 @@ const PersonalArea = lazy(() => import("../pages/PersonalArea"));
 const Songs = lazy(() => import("../pages/Songs"));
 const Fusions = lazy(() => import("../pages/Fusions"));
 const FusionAdd = lazy(() => import("../pages/FusionAdd"));
+const FusionEdit = lazy(() => import("../pages/FusionEdit"));
 const Fusion = lazy(() => import("../pages/Fusion"));
 const AddSong = lazy(() => import("../pages/Create"));
 
@@ -45,6 +46,17 @@ export const router = createBrowserRouter([
         <ProtectedRoute>
           <Topbar />
           <FusionAdd />
+        </ProtectedRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/fusion/edit/:fusionId",
+    element: (
+      <Suspense>
+        <ProtectedRoute>
+          <Topbar />
+          <FusionEdit />
         </ProtectedRoute>
       </Suspense>
     ),

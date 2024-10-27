@@ -11,17 +11,17 @@ import {
   User,
 } from "@carbon/icons-react";
 import {
+  Avatar,
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Link,
   Navbar,
   NavbarBrand,
   NavbarContent,
   NavbarItem,
-  Link,
-  Button,
-  DropdownItem,
-  DropdownTrigger,
-  Dropdown,
-  DropdownMenu,
-  Avatar,
 } from "@nextui-org/react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -29,7 +29,7 @@ export function Topbar() {
   const { isLogged, user } = useAuth();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  console.log(pathname);
+
   const icons = {
     chevron: <ChevronDown fill="currentColor" size={16} />,
     scale: <Scale className="text-warning" fill="currentColor" size={30} />,

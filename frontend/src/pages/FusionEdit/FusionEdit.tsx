@@ -1,13 +1,15 @@
 import { Loader } from "@/components/Loader";
-import { useFusionCreateFusion } from "@/hooks/database/fusions";
+import {
+  useFusionFindFusionById,
+  useFusionUpdateFusion,
+} from "@/hooks/database/fusions";
 import { useSongGetSongs } from "@/hooks/database/songs/useSongGetSongs";
+import { formatFileName, formatTime } from "@/services/utils";
 import {
   Accordion,
   AccordionItem,
   Button,
   Input,
-  Radio,
-  RadioGroup,
   Slider,
   Table,
   TableBody,
@@ -16,17 +18,20 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useFusionAddSongs } from "./useFusionAddSongs";
-import { formatFileName, formatTime } from "@/services/utils";
 
-export function FusionAdd() {
+export function FusionEdit() {
   const navigate = useNavigate();
+  const { fusionId } = useParams<{ fusionId: string }>();
   const { data: songs, isLoading: isLoadingSongs } = useSongGetSongs();
+  const { data: fusion, isFetching: isLoadingFusion } = useFusionFindFusionById(
+    { id: fusionId },
+  );
 
-  const { mutateAsync: createFusion, isPending: isLoadingCreateFusion } =
-    useFusionCreateFusion();
+  const { mutateAsync: updateFusion, isPending: isLoadingUpdateFusion } =
+    useFusionUpdateFusion();
 
   const [fusionName, setFusionName] = useState<string>("");
 
@@ -77,10 +82,24 @@ export function FusionAdd() {
       : `${formatFileName(song?.name ?? "")} - Select an interval`;
   };
 
+  useEffect(() => {
+    setFusionName(fusion?.name ?? "");
+    setSelectedSongIds(new Set(fusion?.intervals.map((i) => i.songId) ?? []));
+    setSelectedIntervalIds(
+      fusion?.intervals.map((i) => ({
+        songId: i.songId,
+        intervalPositionStart: i.intervalPositionStart,
+        intervalPositionEnd: i.intervalPositionEnd,
+      })) ?? [],
+    );
+  }, [fusion]);
+
   return (
     <div>
-      <h1 className="text-center">Create Fusion</h1>
-      {(isLoadingSongs || isLoadingCreateFusion) && <Loader />}
+      <h1 className="text-center">Edit Fusion</h1>
+      {(isLoadingSongs || isLoadingUpdateFusion || isLoadingFusion) && (
+        <Loader />
+      )}
       <div className="flex flex-col gap-4">
         <div className="flex flex-row gap-4 justify-end">
           <Input
@@ -91,18 +110,19 @@ export function FusionAdd() {
           <Button
             color="primary"
             disabled={!selectedIntervals?.length || !fusionName}
-            isDisabled={!selectedIntervals?.length || !fusionName}
             onClick={() => {
-              createFusion({
-                id: crypto.randomUUID(),
-                name: fusionName,
-                intervals: selectedIntervalIds,
+              updateFusion({
+                fusion: {
+                  id: fusionId!,
+                  name: fusionName,
+                  intervals: selectedIntervalIds,
+                },
               }).then(() => {
                 navigate("/fusions");
               });
             }}
           >
-            Save
+            Update
           </Button>
         </div>
         <div className="flex flew-row gap-4">

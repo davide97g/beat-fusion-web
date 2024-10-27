@@ -3,7 +3,7 @@ import { ISongAnalysis } from "../../../types/song.types";
 import { BFUser } from "../../../types/user.types";
 
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { IFusionUser } from "../../../types/fusion.types";
+import { IFusion, IFusionUser } from "../../../types/fusion.types";
 import { appCheck, auth } from "../config/firebase";
 
 const BACKEND_URL =
@@ -13,20 +13,6 @@ const ENGINE_URL =
   import.meta.env.VITE_APP_ENGINE_URL ?? "http://localhost:5000";
 
 export const API = {
-  getFusion: async ({ fusionId }: { fusionId: string }) => {
-    return fetch(`${BACKEND_URL}/fusion/${fusionId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((res) => (res as { fusion: IFusionUser }).fusion)
-      .catch((err) => {
-        console.info(err);
-        return undefined;
-      });
-  },
   getServerStatus: async () => {
     return fetch(`${BACKEND_URL}/status`, {
       method: "GET",
@@ -98,6 +84,33 @@ export const API_AUTH = {
       .catch((err) => {
         console.info(err);
         return null;
+      });
+  },
+  getFusion: async ({ fusionId }: { fusionId: string }) => {
+    const appCheckTokenResponse = await getToken(appCheck, true).catch(
+      (err) => {
+        console.info(err);
+        return null;
+      },
+    );
+    const idToken = await auth.currentUser?.getIdToken().catch((err) => {
+      console.info(err);
+      return null;
+    });
+    if (!appCheckTokenResponse || !idToken) return null;
+    return fetch(`${BACKEND_URL}/fusion/${fusionId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Firebase-AppCheck": appCheckTokenResponse.token,
+        Authorization: `Bearer ${idToken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => (res as { fusion: IFusion }).fusion)
+      .catch((err) => {
+        console.info(err);
+        return undefined;
       });
   },
   getFusions: async ({

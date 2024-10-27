@@ -3,7 +3,7 @@ import {
   useFusionDeleteFusion,
   useFusionFindFusions,
 } from "@/hooks/database/fusions";
-import { Copy, Launch, TrashCan } from "@carbon/icons-react";
+import { Copy, Edit, Launch, TrashCan } from "@carbon/icons-react";
 import {
   Button,
   Table,
@@ -89,6 +89,15 @@ export function Fusions() {
                 }}
               >
                 <Launch />
+              </Button>
+              <Button
+                isIconOnly
+                variant="light"
+                onClick={() => {
+                  navigate(`/fusion/edit/${fusion.id}`);
+                }}
+              >
+                <Edit />
               </Button>
               <Button
                 isIconOnly

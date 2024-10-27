@@ -1,36 +1,7 @@
-import { formatFileName, formatTime } from "@/services/utils";
-import { Chip, Divider, ScrollShadow } from "@nextui-org/react";
-import {
-  ENERGY_TYPE,
-  FLOW_TYPE,
-  ISongAnalysis,
-} from "../../../types/song.types";
-
-function getVariantForEnergy(energy: ENERGY_TYPE) {
-  switch (energy) {
-    case "LOW":
-      return "danger";
-    case "AVG":
-      return "warning";
-    case "HIGH":
-      return "success";
-    default:
-      return "default";
-  }
-}
-
-function getVariantForFlow(flow: FLOW_TYPE) {
-  switch (flow) {
-    case "COOLDOWN":
-      return "danger";
-    case "UNKNOWN":
-      return "warning";
-    case "CLIMAX":
-      return "success";
-    default:
-      return "default";
-  }
-}
+import { formatFileName } from "@/services/utils";
+import { Divider, ScrollShadow } from "@nextui-org/react";
+import { ISongAnalysis } from "../../../types/song.types";
+import { Interval } from "./Interval";
 
 export function SongAnalysis({
   songAnalysis,
@@ -53,37 +24,7 @@ export function SongAnalysis({
         >
           {songAnalysis.intervals.map((interval) => (
             <>
-              <div
-                key={`interval-${interval.start}`}
-                className="flex flex-col gap-4"
-              >
-                <p>
-                  {formatTime(interval.start)} - {formatTime(interval.end)}
-                </p>
-
-                <p>
-                  Intensity:{" "}
-                  <span className="strong">{interval.intensity}</span>
-                </p>
-                <p>
-                  Energy:{" "}
-                  <Chip color={getVariantForEnergy(interval.energy)}>
-                    {interval.energy}
-                  </Chip>
-                </p>
-                <p>
-                  Flow Start:{" "}
-                  <Chip color={getVariantForFlow(interval.flow_start)}>
-                    {interval.flow_start}
-                  </Chip>
-                </p>
-                <p>
-                  Flow End:{" "}
-                  <Chip color={getVariantForFlow(interval.flow_end)}>
-                    {interval.flow_end}
-                  </Chip>
-                </p>
-              </div>
+              <Interval interval={interval} />
               <Divider className="my-4" />
             </>
           ))}

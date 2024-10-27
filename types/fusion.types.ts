@@ -1,17 +1,20 @@
-import { ISongInterval, ISong } from "./song.types";
+import { ISongAnalysis } from "./song.types";
+
+export interface IFusionInterval {
+  songId: string;
+  intervalPositionStart: number;
+  intervalPositionEnd: number;
+}
 
 export interface IFusion {
   id: string; // UUID
   name: string;
-  configItems: ISongInterval[];
-  songs: ISong[];
+  intervals: IFusionInterval[];
+  songs: ISongAnalysis[];
 }
 
 export interface IFusionUser {
   id: string;
   name: string;
-  intervals: {
-    songId: string;
-    intervalPosition: number;
-  }[];
+  intervals: IFusionInterval[];
 }
